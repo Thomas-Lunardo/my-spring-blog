@@ -3,109 +3,69 @@ package org.wildcodeschool.myblog.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.wildcodeschool.myblog.model.Article;
-import org.wildcodeschool.myblog.repository.ArticleRepository;
+import org.wildcodeschool.myblog.model.Category;
+import org.wildcodeschool.myblog.repository.CategoryRepository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("/articles")
+@RequestMapping("/categories")
 public class CategoryController {
 
-    private final ArticleRepository articleRepository;
+    private final CategoryRepository categoryRepository;
 
-    public CategoryController(ArticleRepository articleRepository) {
-        this.articleRepository = articleRepository;
+    public CategoryController(CategoryRepository categoryRepository) {
+        this.categoryRepository = categoryRepository;
     }
 
     @GetMapping
-    public ResponseEntity<List<Article>> getAllArticles() {
-        List<Article> articles = articleRepository.findAll();
-        if (articles.isEmpty()) {
+    public ResponseEntity<List<Category>> getAllCategories() {
+        List<Category> categories = categoryRepository.findAll();
+        if (categories.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.ok(articles);
+        return ResponseEntity.ok(categories);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Article> getArticleById(@PathVariable Long id) {
-        Article article = articleRepository.findById(id).orElse(null);
-        if (article == null) {
+    public ResponseEntity<Category> getCategoryById(@PathVariable Long id) {
+        Category category = categoryRepository.findById(id).orElse(null);
+        if (category == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(article);
+        return ResponseEntity.ok(category);
     }
 
     @PostMapping
-    public ResponseEntity<Article> createArticle(@RequestBody Article article) {
-        article.setCreatedAt(LocalDateTime.now());
-        article.setUpdatedAt(LocalDateTime.now());
-        Article savedArticle = articleRepository.save(article);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedArticle);
+    public ResponseEntity<Category> createCategory(@RequestBody Category category) {
+        category.setName(category.getName());
+        Category savedCategory = categoryRepository.save(category);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedCategory);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Article> updateArticle(@PathVariable Long id, @RequestBody Article articleDetails) {
+    public ResponseEntity<Category> updateCategory(@PathVariable Long id, @RequestBody Category categoryDetails) {
 
-        Article article = articleRepository.findById(id).orElse(null);
-        if (article == null) {
+        Category category = categoryRepository.findById(id).orElse(null);
+        if (category == null) {
             return ResponseEntity.notFound().build();
         }
 
-        article.setTitle(articleDetails.getTitle());
-        article.setContent(articleDetails.getContent());
-        article.setUpdatedAt(LocalDateTime.now());
+        category.setName(categoryDetails.getName());
 
-        Article updatedArticle = articleRepository.save(article);
-        return ResponseEntity.ok(updatedArticle);
+        Category updatedCategory = categoryRepository.save(category);
+        return ResponseEntity.ok(updatedCategory);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteArticle(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
 
-        Article article = articleRepository.findById(id).orElse(null);
-        if (article == null) {
+        Category category = categoryRepository.findById(id).orElse(null);
+        if (category == null) {
             return ResponseEntity.notFound().build();
         }
 
-        articleRepository.delete(article);
+        categoryRepository.delete(category);
         return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping("/search-title")
-    public ResponseEntity<List<Article>> getArticlesByTitle(@RequestParam String searchTerms) {
-        List<Article> articles = articleRepository.findByTitle(searchTerms);
-        if (articles.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(articles);
-    }
-
-    @GetMapping("/search-content")
-    public ResponseEntity<List<Article>> getArticlesByContent(@RequestParam String searchTerms) {
-        List<Article> articles = articleRepository.findByContentContaining(searchTerms);
-        if (articles.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(articles);
-    }
-
-    @GetMapping("/search-date")
-    public ResponseEntity<List<Article>> getArticlesCreateAfter(@RequestParam LocalDateTime searchTerms) {
-        List<Article> articles = articleRepository.findByCreatedAtGreaterThan(searchTerms);
-        if (articles.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(articles);
-    }
-
-    @GetMapping("/search-five-last-articles")
-    public ResponseEntity<List<Article>> getFiveLastArticles(@RequestParam LocalDateTime searchTerms) {
-        List<Article> articles = articleRepository.findFirst5ByCreatedAtBeforeOrderByCreatedAtDesc(searchTerms);
-        if (articles.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(articles);
     }
 }
