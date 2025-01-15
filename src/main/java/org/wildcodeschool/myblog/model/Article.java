@@ -28,17 +28,22 @@ public class Article {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @ManyToMany(mappedBy = "images")
-    private List<Article> articles;
+    @ManyToMany
+    @JoinTable(
+            name = "article_image",
+            joinColumns = @JoinColumn(name = "article_id"),
+            inverseJoinColumns = @JoinColumn(name = "image_id")
+    )
+    private List<Image> images;
 
     // Getters et setters
 
-    public List<Article> getArticles() {
-        return articles;
+    public List<Image> getImages() {
+        return images;
     }
 
-    public void setArticles(List<Article> articles) {
-        this.articles = articles;
+    public void setImages(List<Image> images) {
+        this.images = images;
     }
 
     public Category getCategory() {
