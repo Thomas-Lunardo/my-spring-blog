@@ -36,7 +36,8 @@ public class Article {
     )
     private List<Image> images;
 
-    // Getters et setters
+    @OneToMany(mappedBy = "article")
+    private List<ArticleAuthor> articleAuthors;
 
     public List<Image> getImages() {
         return images;
@@ -92,5 +93,13 @@ public class Article {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public List<ArticleAuthor> getArticleAuthors() {
+        return articleAuthors;
+    }
+
+    public void setArticleAuthors(List<ArticleAuthor> articleAuthors) {
+        this.articleAuthors = articleAuthors;
     }
 }

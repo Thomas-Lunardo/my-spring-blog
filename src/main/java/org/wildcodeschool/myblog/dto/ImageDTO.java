@@ -10,8 +10,6 @@ public class ImageDTO {
     private String url;
     private List<Long> articlesIds;
 
-    // Getters et setters
-
     public Long getId() {
         return id;
     }
