@@ -48,6 +48,7 @@ public class Author {
     }
 
     public void setArticleAuthors(List<ArticleAuthor> articleAuthors) {
+
         this.articleAuthors = articleAuthors;
     }
 }
