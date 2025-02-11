@@ -4,9 +4,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.wildcodeschool.myblog.dto.AuthorDTO;
+import org.wildcodeschool.myblog.dto.ImageDTO;
 import org.wildcodeschool.myblog.model.Author;
-import org.wildcodeschool.myblog.repository.ArticleRepository;
-import org.wildcodeschool.myblog.repository.AuthorRepository;
+import org.wildcodeschool.myblog.model.Image;
+import org.wildcodeschool.myblog.service.AuthorService;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,77 +16,60 @@ import java.util.stream.Collectors;
 @RequestMapping("/authors")
 public class AuthorController {
 
-    private final AuthorRepository authorRepository;
-    private final ArticleRepository articleRepository;
+    private final AuthorService authorService;
 
     public AuthorController(
-            AuthorRepository authorRepository,
-            ArticleRepository articleRepository
+            AuthorService authorService
     ) {
-        this.authorRepository = authorRepository;
-        this.articleRepository = articleRepository;
+        this.authorService = authorService;
     }
 
     @GetMapping
     public ResponseEntity<List<AuthorDTO>> getAllAuthors() {
-        List<Author> authors = authorRepository.findAll();
-        if (authors.isEmpty()) {
+        List<AuthorDTO> authorsDTO = authorService.getAllAuthors();
+        if (authorsDTO.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
 
-        List<AuthorDTO> authorDTOs = authors.stream().map(this::convertToDTO).collect(Collectors.toList());
-        return ResponseEntity.ok(authorDTOs);
+        return ResponseEntity.ok(authorsDTO);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<AuthorDTO> getAuthorById(@PathVariable Long id) {
-        Author author = authorRepository.findById(id).orElse(null);
-        if (author == null) {
+        AuthorDTO authorDTO = authorService.getAuthorById(id);
+        if (authorDTO == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(convertToDTO(author));
+        return ResponseEntity.ok(authorDTO);
     }
 
     @PostMapping
     public ResponseEntity<AuthorDTO> createAuthor(@RequestBody Author author) {
-        author.setFirstname(author.getFirstname());
-        author.setLastname(author.getLastname());
-        Author savedAuthor = authorRepository.save(author);
-        return ResponseEntity.status(HttpStatus.CREATED).body(convertToDTO(savedAuthor));
+
+        AuthorDTO savedAuthorDTO = authorService.createAuthor(author);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedAuthorDTO);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<AuthorDTO> updateAuthor(@PathVariable Long id, @RequestBody Author authorDetails) {
 
-        Author author = authorRepository.findById(id).orElse(null);
-        if (author == null) {
+        AuthorDTO updatedAuthorDTO = authorService.updateAuthor(id, authorDetails);
+
+        if (updatedAuthorDTO == null) {
             return ResponseEntity.notFound().build();
         }
 
-        author.setFirstname(authorDetails.getFirstname());
-        author.setLastname(authorDetails.getLastname());
-
-        Author updatedAuthor = authorRepository.save(author);
-        return ResponseEntity.ok(convertToDTO(updatedAuthor));
+        return ResponseEntity.ok(updatedAuthorDTO);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAuthor(@PathVariable Long id) {
 
-        Author author = authorRepository.findById(id).orElse(null);
-        if (author == null) {
+        if (authorService.deleteAuthor(id)) {
             return ResponseEntity.notFound().build();
         }
 
-        authorRepository.delete(author);
         return ResponseEntity.noContent().build();
-    }
-
-    private AuthorDTO convertToDTO(Author author) {
-        AuthorDTO authorDTO = new AuthorDTO();
-        authorDTO.setId(author.getId());
-        authorDTO.setFirstname(author.getFirstname());
-        authorDTO.setLastname(author.getLastname());
-        return authorDTO;
     }
 }
