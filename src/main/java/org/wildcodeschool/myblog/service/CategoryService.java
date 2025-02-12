@@ -2,6 +2,8 @@ package org.wildcodeschool.myblog.service;
 
 import org.springframework.stereotype.Service;
 import org.wildcodeschool.myblog.dto.CategoryDTO;
+import org.wildcodeschool.myblog.exception.NoContentException;
+import org.wildcodeschool.myblog.exception.ResourceNotFoundException;
 import org.wildcodeschool.myblog.mapper.CategoryMapper;
 import org.wildcodeschool.myblog.model.*;
 import org.wildcodeschool.myblog.repository.*;
@@ -25,11 +27,16 @@ public class CategoryService {
 
     public List<CategoryDTO> getAllCategories() {
         List<Category> categories = categoryRepository.findAll();
+
+        if (categories.isEmpty()) {
+            throw new NoContentException("Aucune categorie trouvée.");
+        }
         return categories.stream().map(categoryMapper::convertToDTO).collect(Collectors.toList());
     }
 
     public CategoryDTO getCategoryById(Long id) {
-        Category category = categoryRepository.findById(id).orElse(null);
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("La catégorie avec l'id " + id + " n'a pas été trouvée."));
 
         if (category == null) {
             return null;
@@ -49,7 +56,8 @@ public class CategoryService {
 
     public CategoryDTO updateCategory(Long id, Category categoryDetails) {
 
-        Category category = categoryRepository.findById(id).orElse(null);
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("La catégorie avec l'id " + id + " n'a pas été trouvée."));
 
         if (category == null) {
             return null;
@@ -64,7 +72,8 @@ public class CategoryService {
 
     public boolean deleteCategory(Long id) {
 
-        Category category = categoryRepository.findById(id).orElse(null);
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("La catégorie avec l'id " + id + " n'a pas été trouvée."));
 
         if (category == null) {
             return false;

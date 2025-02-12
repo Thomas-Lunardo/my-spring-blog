@@ -3,16 +3,11 @@ package org.wildcodeschool.myblog.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.wildcodeschool.myblog.dto.CategoryDTO;
 import org.wildcodeschool.myblog.dto.ImageDTO;
-import org.wildcodeschool.myblog.model.Article;
-import org.wildcodeschool.myblog.model.Category;
 import org.wildcodeschool.myblog.model.Image;
-import org.wildcodeschool.myblog.repository.ImageRepository;
 import org.wildcodeschool.myblog.service.ImageService;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/images")
@@ -29,9 +24,6 @@ public class ImageController {
     @GetMapping
     public ResponseEntity<List<ImageDTO>> getAllImages() {
         List<ImageDTO> images = imageService.getAllImages();
-        if (images.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
 
         return ResponseEntity.ok(images);
     }

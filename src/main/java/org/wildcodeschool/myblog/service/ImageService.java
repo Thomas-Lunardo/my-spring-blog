@@ -3,7 +3,10 @@ package org.wildcodeschool.myblog.service;
 import org.springframework.stereotype.Service;
 import org.wildcodeschool.myblog.dto.CategoryDTO;
 import org.wildcodeschool.myblog.dto.ImageDTO;
+import org.wildcodeschool.myblog.exception.NoContentException;
+import org.wildcodeschool.myblog.exception.ResourceNotFoundException;
 import org.wildcodeschool.myblog.mapper.ImageMapper;
+import org.wildcodeschool.myblog.model.Article;
 import org.wildcodeschool.myblog.model.Category;
 import org.wildcodeschool.myblog.model.Image;
 import org.wildcodeschool.myblog.repository.ImageRepository;
@@ -27,11 +30,17 @@ public class ImageService {
 
     public List<ImageDTO> getAllImages() {
         List<Image> images = imageRepository.findAll();
+
+        if (images.isEmpty()) {
+            throw new NoContentException("Aucune image trouvée.");
+        }
+
         return images.stream().map(imageMapper::convertToDTO).collect(Collectors.toList());
     }
 
     public ImageDTO getImageById(Long id) {
-        Image image = imageRepository.findById(id).orElse(null);
+        Image image = imageRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("L'image avec l'id " + id + " n'a pas été trouvée."));
 
         if (image == null) {
             return null;
@@ -51,7 +60,8 @@ public class ImageService {
 
     public ImageDTO updateImage(Long id, Image imageDetails) {
 
-        Image image = imageRepository.findById(id).orElse(null);
+        Image image = imageRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("L'image avec l'id " + id + " n'a pas été trouvée."));
 
         if (image == null) {
             return null;
@@ -66,14 +76,14 @@ public class ImageService {
 
     public boolean deleteImage(Long id) {
 
-        Image image = imageRepository.findById(id).orElse(null);
+        Image image = imageRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("L'image avec l'id " + id + " n'a pas été trouvée."));
 
         if (image == null) {
             return false;
         }
 
         imageRepository.delete(image);
-
         return true;
     }
 }
