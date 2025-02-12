@@ -2,6 +2,8 @@ package org.wildcodeschool.myblog.service;
 
 import org.springframework.stereotype.Service;
 import org.wildcodeschool.myblog.dto.AuthorDTO;
+import org.wildcodeschool.myblog.exception.NoContentException;
+import org.wildcodeschool.myblog.exception.ResourceNotFoundException;
 import org.wildcodeschool.myblog.mapper.AuthorMapper;
 import org.wildcodeschool.myblog.model.Article;
 import org.wildcodeschool.myblog.model.ArticleAuthor;
@@ -35,12 +37,19 @@ public class AuthorService {
     }
 
     public List<AuthorDTO> getAllAuthors() {
+
         List<Author> authors = authorRepository.findAll();
+
+        if (authors.isEmpty()) {
+            throw new NoContentException("Aucun auteur trouvé.");
+        }
+
         return authors.stream().map(authorMapper::convertToDTO).collect(Collectors.toList());
     }
 
     public AuthorDTO getAuthorById(Long id) {
-        Author author = authorRepository.findById(id).orElse(null);
+        Author author = authorRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("L'author avec l'id " + id + " n'a pas été trouvé."));
 
         if (author == null) {
             return null;
@@ -77,7 +86,8 @@ public class AuthorService {
 
     public AuthorDTO updateAuthor(Long id, Author authorDetails) {
 
-        Author author = authorRepository.findById(id).orElse(null);
+        Author author = authorRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("L'author avec l'id " + id + " n'a pas été trouvé."));
 
         if (author == null) {
             return null;
@@ -122,7 +132,8 @@ public class AuthorService {
 
     public boolean deleteAuthor(Long id) {
 
-        Author author = authorRepository.findById(id).orElse(null);
+        Author author = authorRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("L'author avec l'id " + id + " n'a pas été trouvé."));
 
         if (author == null) {
             return false;

@@ -1,15 +1,16 @@
 package org.wildcodeschool.myblog.service;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.wildcodeschool.myblog.dto.ArticleDTO;
+import org.wildcodeschool.myblog.exception.NoContentException;
+import org.wildcodeschool.myblog.exception.ResourceNotFoundException;
 import org.wildcodeschool.myblog.mapper.ArticleMapper;
 import org.wildcodeschool.myblog.model.*;
 import org.wildcodeschool.myblog.repository.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,11 +42,18 @@ public class ArticleService {
 
     public List<ArticleDTO> getAllArticles() {
         List<Article> articles = articleRepository.findAll();
+
+        if (articles.isEmpty()) {
+            throw new NoContentException("Aucun article trouvé.");
+        }
+
         return articles.stream().map(articleMapper::convertToDTO).collect(Collectors.toList());
     }
 
     public ArticleDTO getArticleById(Long id) {
-        Article article = articleRepository.findById(id).orElse(null);
+
+        Article article = articleRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("L'article avec l'id " + id + " n'a pas été trouvé."));
 
         if (article == null) {
             return null;
@@ -196,7 +204,9 @@ public class ArticleService {
     }
 
     public boolean deleteArticle(Long id) {
-        Article article = articleRepository.findById(id).orElse(null);
+        Article article = articleRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("L'article avec l'id " + id + " n'a pas été trouvé."));
+
         if (article == null) {
             return false;
         }
