@@ -2,8 +2,8 @@ package org.wildcodeschool.myblog.mapper;
 
 import org.springframework.stereotype.Component;
 import org.wildcodeschool.myblog.dto.ArticleAuthorDTO;
+import org.wildcodeschool.myblog.dto.ArticleCreateDTO;
 import org.wildcodeschool.myblog.dto.ArticleDTO;
-import org.wildcodeschool.myblog.dto.AuthorDTO;
 import org.wildcodeschool.myblog.model.Article;
 import org.wildcodeschool.myblog.model.Image;
 
@@ -22,10 +22,16 @@ public class ArticleMapper {
             articleDTO.setCategoryName(article.getCategory().getName());
         }
         if (article.getImages() != null) {
-            articleDTO.setImageUrls(article.getImages().stream().map(Image::getUrl).collect(Collectors.toList()));
+            articleDTO.setImageUrls(article.getImages()
+                    .stream()
+                    .map(Image::getUrl)
+                    .collect(Collectors.toList())
+            );
         }
+
         if (article.getArticleAuthors() != null) {
-            articleDTO.setArticleAuthorDTOS(article.getArticleAuthors().stream()
+            articleDTO.setArticleAuthorDTOS(article.getArticleAuthors()
+                    .stream()
                     .filter(articleAuthor -> articleAuthor.getArticle() != null)
                     .map(articleAuthor -> {
                         ArticleAuthorDTO articleAuthorDTO = new ArticleAuthorDTO();
@@ -38,5 +44,13 @@ public class ArticleMapper {
                     .collect(Collectors.toList()));
         }
         return articleDTO;
+    }
+
+    public Article convertToEntity(ArticleCreateDTO articleCreateDTO) {
+        Article article = new Article();
+        article.setTitle(articleCreateDTO.getTitle());
+        article.setContent(articleCreateDTO.getContent());
+
+        return article;
     }
 }

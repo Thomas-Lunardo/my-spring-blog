@@ -1,5 +1,6 @@
 package org.wildcodeschool.myblog.dto;
 
+import org.hibernate.validator.constraints.URL;
 import org.wildcodeschool.myblog.model.Image;
 
 import java.util.List;
@@ -7,7 +8,10 @@ import java.util.List;
 public class ImageDTO {
 
     private Long id;
+
+    @URL(message = "L'URL de l'image doit être valide")
     private String url;
+
     private List<Long> articlesIds;
 
     public Long getId() {
