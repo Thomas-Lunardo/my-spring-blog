@@ -2,6 +2,9 @@ package org.wildcodeschool.myblog.service;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.wildcodeschool.myblog.dto.ArticleDTO;
+import org.wildcodeschool.myblog.exception.ResourceNotFoundException;
+import org.wildcodeschool.myblog.model.Article;
 import org.wildcodeschool.myblog.model.User;
 import org.wildcodeschool.myblog.repository.UserRepository;
 
@@ -28,5 +31,17 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(password));
         user.setRoles(roles);
         return userRepository.save(user);
+    }
+
+    public User findById(Long id) {
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("L'utilisateur avec l'id " + id + " n'a pas été trouvé."));
+
+        if (user == null) {
+            return null;
+        }
+
+        return user;
     }
 }

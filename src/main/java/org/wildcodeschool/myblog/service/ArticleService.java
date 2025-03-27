@@ -104,7 +104,7 @@ public class ArticleService {
             article.setCategory(category);
         }
 
-        if (articleCreateDTO.getImages() != null && !article.getImages().isEmpty()) {
+        if (articleCreateDTO.getImages() != null && !articleCreateDTO.getImages().isEmpty()) {
             List<Image> validImages = new ArrayList<>();
             for (ImageDTO imageDTO : articleCreateDTO.getImages()) {
                 if (imageDTO.getId() != null) {
@@ -136,7 +136,7 @@ public class ArticleService {
                 ArticleAuthor articleAuthor = new ArticleAuthor();
                 articleAuthor.setAuthor(author);
                 articleAuthor.setArticle(savedArticle);
-                articleAuthor.setContribution(articleAuthor.getContribution());
+                articleAuthor.setContribution(articleAuthorDTO.getContribution());
 
                 articleAuthorRepository.save(articleAuthor);
             }

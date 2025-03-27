@@ -24,6 +24,7 @@ public class ArticleController {
         this.articleService = articleService;
     }
 
+
     @GetMapping
     public ResponseEntity<List<ArticleDTO>> getAllArticles() {
         List<ArticleDTO> articles = articleService.getAllArticles();
@@ -86,7 +87,6 @@ public class ArticleController {
         ArticleDTO savedArticleDTO = articleService.createArticle(articleCreateDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedArticleDTO);
     }
-
 
     @PutMapping("/{id}")
     public ResponseEntity<ArticleDTO> updateArticle(@PathVariable Long id, @RequestBody Article articleDetails) {
