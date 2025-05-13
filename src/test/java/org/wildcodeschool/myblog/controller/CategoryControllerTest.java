@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.web.servlet.MockMvc;
 import org.wildcodeschool.myblog.dto.CategoryDTO;
 import org.wildcodeschool.myblog.exception.ResourceNotFoundException;
@@ -33,7 +34,7 @@ class CategoryControllerTest {
     private JwtService jwtService;
 
     @MockBean
-    private CustomUserDetailsService customUserDetailsService;
+    private UserDetailsService userDetailsService;
 
     @Test
     void testGetAllCategories() throws Exception {
