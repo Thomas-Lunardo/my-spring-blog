@@ -38,10 +38,6 @@ public class CategoryService {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("La catégorie avec l'id " + id + " n'a pas été trouvée."));
 
-        if (category == null) {
-            return null;
-        }
-
         return categoryMapper.convertToDTO(category);
     }
 
